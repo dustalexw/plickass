@@ -1,1 +1,7 @@
-__pycache__
+__pycache__/
+*.app/
+build.log
+launch-debug.log
+.DS_Store
+# local music output, not part of the project
+hue/
