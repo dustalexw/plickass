@@ -1,4 +1,4 @@
-"""Simple GUI for Plexamp Download Copier. Run: python3 gui.py"""
+"""Simple cross-platform Tk GUI for plickass. Run: python3 gui.py"""
 import os
 import queue
 import sys
@@ -45,7 +45,7 @@ class App:
         self.root = root
         self.q = queue.Queue()
         self.running = False
-        root.title('Plexamp Download Copier')
+        root.title('plickass')
         # Explicit colors: Apple's bundled Tk 8.5 otherwise draws labels/fields invisibly on recent macOS.
         bg, fg, field = '#f4f4f4', '#1d1d1f', '#ffffff'
         root.configure(bg=bg)

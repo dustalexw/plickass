@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates Plexamp Download Copier's brand assets: the app icon, the README header and the README badges.
+"""Generates plickass's brand assets: the app icon, the README header and the README badges.
 
     python3 scripts/make_brand.py [--version 1.2.0]
 
@@ -188,8 +188,8 @@ def header(path, version, W=2560, H=760):
     x = 620
     d.text((x, 196), "PLEXAMP DOWNLOADS, UNTANGLED", font=font("Inter-Bold.otf", 30), fill=MINT)
     title = font("InterDisplay-Bold.otf", 150)
-    d.text((x - 6, 240), "Download ", font=title, fill=CREAM)
-    d.text((x - 6 + d.textlength("Download ", font=title), 240), "Copier", font=title, fill=AMBER)
+    d.text((x - 6, 240), "plick", font=title, fill=CREAM)
+    d.text((x - 6 + d.textlength("plick", font=title), 240), "ass", font=title, fill=AMBER)
     d.text((x, 432), "Your offline music, with real names.", font=font("Inter-Medium.otf", 46), fill=CREAM)
     d.text((x, 496), "Artist / Album / 01 - Track — copied anywhere you like.", font=font("Inter-Regular.otf", 34), fill=TAUPE)
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))

@@ -1,4 +1,4 @@
-// Plexamp Download Copier — native Cocoa window (JavaScript for Automation).
+// plickass — native Cocoa window (JavaScript for Automation).
 // Run by the app's launcher: osascript -l JavaScript app.js
 // Follows the dustalexw app layout (Banana Split Redux, Data Curator, Cover Flow): an integrated brand bar
 // with an accent rule, uppercase section kickers on rounded cards, one solid accent button, a mint
@@ -11,8 +11,8 @@ function envVar(k) { const v = env.objectForKey(k); return v.isNil() ? '' : v.js
 const RES = envVar('PDC_RES');
 const PY = envVar('PDC_PYTHON') || '/usr/bin/python3';
 const VERSION = envVar('PDC_VERSION') || '1.3.0';
-const NAME = 'Plexamp Download Copier';
-const REPO = 'https://github.com/danrahn/Plexamp-Download-Copier';
+const NAME = 'plickass';
+const REPO = 'https://github.com/dustalexw/plickass';
 const HOME = $.NSHomeDirectory().js;
 const fm = $.NSFileManager.defaultManager;
 try { $.NSProcessInfo.processInfo.processName = NAME; } catch (e) {}
@@ -56,10 +56,10 @@ function centred(m) {
   m.addAttributeValueRange($.NSParagraphStyleAttributeName, p, $.NSMakeRange(0, m.length));
   return m;
 }
-function brandName(size) { // "Plexamp Download" in cream, "Copier" in amber, as in the README header
+function brandName(size) { // "plick" in cream, "ass" in amber, as in the README header
   const f = rounded(size, 0.62);
-  const t = astr('Plexamp Download ', C.cream, f);
-  t.appendAttributedString(astr('Copier', C.amber, f));
+  const t = astr('plick', C.cream, f);
+  t.appendAttributedString(astr('ass', C.amber, f));
   return t;
 }
 
@@ -67,7 +67,7 @@ function brandName(size) { // "Plexamp Download" in cream, "Copier" in amber, as
 function isDir(p) { const d = Ref(); return !!p && fm.fileExistsAtPathIsDirectory(p, d) && d[0]; }
 const DEFAULT_SRC = HOME + '/Library/Application Support/Plexamp/Offline';
 const DEFAULT_DST = HOME + '/Music/Plexamp Copies';
-const LOG = $.NSTemporaryDirectory().js + 'plexamp-copier-' + $.NSProcessInfo.processInfo.processIdentifier + '.log';
+const LOG = $.NSTemporaryDirectory().js + 'plickass-' + $.NSProcessInfo.processInfo.processIdentifier + '.log';
 const icon = $.NSImage.alloc.initWithContentsOfFile(RES + '/AppIcon.icns');
 
 function alert(title, msg, buttons) {
@@ -525,7 +525,7 @@ function about() {
   plate('Source on GitHub', 'openSource:', 28 + LB + 8, LY, LB, 30, 0, 'secondary');
   plate('Report an issue', 'openIssues:', 28 + (LB + 8) * 2, LY, LB, 30, 0, 'secondary');
 
-  wrapped('Original script by Daniel Rahn  ·  Native window by JavaScript for Automation  ·  Copying by Python 3',
+  wrapped('Based on Plexamp Download Copier by Daniel Rahn  ·  Native window by JavaScript for Automation  ·  Copying by Python 3',
           40, LY + 46, AW - 80, 32, 0, C.dim, font(11), true);
   const close = plate('Close', 'closeAbout:', AW - 28 - 84, AH - 28 - 30, 84, 30, 0, 'secondary');
   close.button.keyEquivalent = '\u001b';

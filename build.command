@@ -1,15 +1,15 @@
 #!/bin/bash
-# Builds "Plexamp Download Copier.app" next to this script and launches it.
+# Builds "plickass.app" next to this script and launches it.
 # Double-click in Finder, or run ./build.command in Terminal.
 # Re-run after editing app.js, copy_runner.py, correlate.py or plexampDownloadCopier.py.
 cd "$(dirname "$0")" || exit 1
 
-APP="Plexamp Download Copier.app"
+APP="plickass.app"
 VERSION="$(tr -d ' \n' < VERSION)"
 LOG="build.log"
-echo "=== Plexamp Download Copier $VERSION build — $(date)" > "$LOG"
+echo "=== plickass $VERSION build — $(date)" > "$LOG"
 
-echo "Building Plexamp Download Copier $VERSION…"
+echo "Building plickass $VERSION…"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" || exit 1
 cp app.js copy_runner.py correlate.py plexampDownloadCopier.py AppIcon.icns "$APP/Contents/Resources/" >> "$LOG" 2>&1 || {
@@ -20,9 +20,9 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleName</key><string>Plexamp Download Copier</string>
-  <key>CFBundleDisplayName</key><string>Plexamp Download Copier</string>
-  <key>CFBundleIdentifier</key><string>local.plexamp-download-copier</string>
+  <key>CFBundleName</key><string>plickass</string>
+  <key>CFBundleDisplayName</key><string>plickass</string>
+  <key>CFBundleIdentifier</key><string>com.dustalexw.plickass</string>
   <key>CFBundleVersion</key><string>$VERSION</string>
   <key>CFBundleShortVersionString</key><string>$VERSION</string>
   <key>CFBundlePackageType</key><string>APPL</string>
@@ -41,7 +41,7 @@ cat > "$APP/Contents/MacOS/launcher" <<'LAUNCH'
 MACOS="$(cd "$(dirname "$0")" && pwd)"
 export PDC_RES="$(cd "$MACOS/../Resources" && pwd)"
 export PDC_VERSION="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$MACOS/../Info.plist" 2>/dev/null)"
-LOG="$HOME/Library/Logs/PlexampDownloadCopier.log"
+LOG="$HOME/Library/Logs/plickass.log"
 mkdir -p "$(dirname "$LOG")"
 
 for c in "$HOME/.homebrew/bin/python3" /opt/homebrew/bin/python3 /usr/local/bin/python3 \
@@ -52,7 +52,7 @@ for c in "$HOME/.homebrew/bin/python3" /opt/homebrew/bin/python3 /usr/local/bin/
   "$c" -c 'import sys; sys.exit(sys.version_info < (3, 7))' 2>/dev/null && { export PDC_PYTHON="$c"; break; }
 done
 if [ -z "$PDC_PYTHON" ]; then
-  osascript -e 'display alert "Plexamp Download Copier needs Python 3" message "Install it from python.org, or run  xcode-select --install  in Terminal." as critical' >/dev/null
+  osascript -e 'display alert "plickass needs Python 3" message "Install it from python.org, or run  xcode-select --install  in Terminal." as critical' >/dev/null
   exit 1
 fi
 

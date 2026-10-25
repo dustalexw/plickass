@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/readme-header.png" alt="Plexamp Download Copier — Only on macOS; your offline music, with real names" width="100%"></p>
+<p align="center"><img src="docs/readme-header.png" alt="plickass — Only on macOS; your offline music, with real names" width="100%"></p>
 
 <p align="center">
   <a href="#mac-app-gui"><img src="docs/badge-release.svg" alt="Release v1.3.0"></a>
@@ -6,9 +6,9 @@
   <a href="#mac-app-gui"><img src="docs/badge-platform.svg" alt="Platform: macOS 11 or later, Apple silicon and Intel"></a>
 </p>
 
-# Plexamp Download Copier
+# plickass
 
-Plexamp's offline downloads are stored as files named only by random IDs. **Plexamp Download Copier**
+Plexamp's offline downloads are stored as files named only by random IDs. **plickass**
 turns them back into real music files, copied anywhere you like as `Artist / Album / 01 - Track`.
 
 ```
@@ -20,12 +20,12 @@ Find your Plexamp downloads → Choose a destination → Copy → Show in Finder
 * **Read-only on the Plexamp side.** Your downloads are never moved or changed.
 * **Live progress** with every copied track listed as it happens.
 
-Choose **Plexamp Download Copier → About Plexamp Download Copier** for the version, a feature overview
+Choose **plickass → About plickass** for the version, a feature overview
 and links to the source.
 
 ## The script
 
-This script copies downloaded music from Plexamp to a location of your choice.
+plickass is built on [Plexamp Download Copier](https://github.com/danrahn/Plexamp-Download-Copier) by Daniel Rahn, whose command-line script does the copying. The script copies downloaded music from Plexamp to a location of your choice.
 
 When you download music in plexamp, it is given a random guid as a filename with no extension, making it impossible to know at a glance what each file corresponds to. However, each download folder also includes an `index.json` that contains the metadata for all the items, which can be used to correlate the guid to the right track.
 
@@ -61,10 +61,10 @@ This script was tested on Windows and Ubuntu, but should work on other platforms
 
 ## Mac app (GUI)
 
-Double-click **Plexamp Download Copier.app**. It finds your Plexamp downloads folder automatically (or click **Browse…**), lets you pick a destination, and shows progress while it copies. You can drag it into `/Applications`; it carries its own copy of the scripts.
+Double-click **plickass.app**. It finds your Plexamp downloads folder automatically (or click **Browse…**), lets you pick a destination, and shows progress while it copies. You can drag it into `/Applications`; it carries its own copy of the scripts.
 
 - The window is a native macOS window (`app.js`, run by macOS's built-in JavaScript for Automation), so no Tk or extra packages are needed. The copying is done by any Python 3 on your Mac (Homebrew, python.org, or Apple's Command Line Tools).
 - After editing `app.js`, `copy_runner.py`, `correlate.py` or `plexampDownloadCopier.py`, double-click `build.command` (or run `./build.command`) to rebuild and open the app. `VERSION` sets the version number.
-- If something goes wrong, check `~/Library/Logs/PlexampDownloadCopier.log`.
+- If something goes wrong, check `~/Library/Logs/plickass.log`.
 
 `gui.py` is a cross-platform Tk version (`python3 gui.py`). It needs Tk 8.6 or newer: Apple's built-in Python ships Tk 8.5, which draws a blank window on recent macOS.
