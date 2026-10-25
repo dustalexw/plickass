@@ -1,9 +1,9 @@
 <p align="center"><img src="docs/readme-header.png" alt="plickass — Only on macOS; your offline music, with real names" width="100%"></p>
 
 <p align="center">
-  <a href="#mac-app-gui"><img src="docs/badge-release.svg" alt="Release v1.3.0"></a>
-  <a href="#mac-app-gui"><img src="docs/badge-download.svg" alt="Download the macOS app"></a>
-  <a href="#mac-app-gui"><img src="docs/badge-platform.svg" alt="Platform: macOS 11 or later, Apple silicon and Intel"></a>
+  <a href="https://github.com/dustalexw/plickass/releases/tag/v1.3.0"><img src="docs/badge-release.svg" alt="Release v1.3.0"></a>
+  <a href="https://github.com/dustalexw/plickass/releases/download/v1.3.0/plickass-1.3.0-macOS.zip"><img src="docs/badge-download.svg" alt="Download the macOS app"></a>
+  <a href="#download-the-macos-app"><img src="docs/badge-platform.svg" alt="Platform: macOS 11 or later, Apple silicon and Intel"></a>
 </p>
 
 # plickass
@@ -22,6 +22,18 @@ Find your Plexamp downloads → Choose a destination → Copy → Show in Finder
 
 Choose **plickass → About plickass** for the version, a feature overview
 and links to the source.
+
+## Download the macOS app
+
+Download **plickass-1.3.0-macOS.zip** from the [1.3.0 release](https://github.com/dustalexw/plickass/releases/tag/v1.3.0), unzip it and move **plickass.app**
+to Applications. It runs on macOS 11 or later, on Apple silicon and Intel.
+
+* **Python 3** does the copying. Most Macs already have it through Apple's Command Line Tools; if plickass
+  says it can't find Python, run `xcode-select --install` in Terminal or install it from
+  [python.org](https://www.python.org/downloads/macos/).
+* The app isn't signed or notarized by Apple, so macOS blocks the first launch. Open **System Settings →
+  Privacy & Security**, scroll down and click **Open Anyway** next to plickass (or right-click the app and
+  choose **Open**). After that it opens normally.
 
 ## The script
 

@@ -5,3 +5,4 @@ launch-debug.log
 .DS_Store
 # local music output, not part of the project
 hue/
+*.zip
