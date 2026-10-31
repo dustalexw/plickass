@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>plickass</title>
+<meta name="description" content="Your Plexamp offline downloads, with real names. A free Mac app that copies them out as Artist / Album / 01 - Track.">
+<meta property="og:title" content="plickass">
+<meta property="og:description" content="Your offline music, with real names.">
+<meta property="og:image" content="https://raw.githubusercontent.com/dustalexw/plickass/main/docs/readme-header.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icon.webp" type="image/webp">
+<link rel="apple-touch-icon" href="icon.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one long dark page in the app's own warm colors (espresso ink, amber, mint, coral).
+   Hero with icon, two-tone wordmark and download button; "random IDs → real names" demo;
+   feature grid; install steps; release notes read from GitHub. */
+:root{
+  --ink-0:#100c09; --ink-1:#221b15;
+  --panel:rgba(255,240,220,.045); --edge:rgba(255,236,210,.12);
+  --cream:#faf4e4; --muted:#b3a896; --dim:#7d7366;
+  --amber:#f5b03c; --amber-deep:#d98a1e; --coral:#ff7e67; --mint:#7ed6b8;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--ink-0)}
+body{margin:0;color:var(--cream);font:16px/1.6 var(--body);min-height:100vh;overflow-x:hidden;
+  background:radial-gradient(1100px 650px at 6% -10%,rgba(245,176,60,.20) 0%,transparent 60%),
+             radial-gradient(900px 650px at 100% 12%,rgba(126,214,184,.10) 0%,transparent 55%),
+             linear-gradient(180deg,#1a1511 0%,var(--ink-0) 760px)}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+a{color:var(--amber)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--mint);outline-offset:3px;border-radius:12px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:20px 0}
+.top .mini{display:flex;align-items:center;gap:10px;font:800 16px var(--body);color:var(--cream);text-decoration:none;letter-spacing:-.01em}
+.top .mini img{width:30px;height:30px;border-radius:8px}
+.top nav{display:flex;gap:18px;flex-wrap:wrap}
+.top nav a{color:var(--muted);text-decoration:none;font-weight:600;font-size:14px}
+.top nav a:hover{color:var(--cream)}
+
+.hero{display:grid;grid-template-columns:auto 1fr;gap:44px;align-items:center;padding-block:72px 40px}
+.hero .icon{width:220px;height:220px;border-radius:50px;filter:drop-shadow(0 22px 60px rgba(245,176,60,.28));animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-10px) rotate(1deg)}}
+.eyebrow{font:700 13px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--mint);margin:0 0 6px}
+h1{font:900 clamp(56px,10vw,112px)/.95 var(--body);margin:0;letter-spacing:-.045em;color:var(--cream)}
+h1 .ass{color:var(--amber)}
+.tag{font-size:clamp(19px,2.3vw,24px);font-weight:600;margin:18px 0 6px;max-width:34ch;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 22px;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px;padding:0;list-style:none}
+.chips li{font-size:13px;font-weight:600;color:var(--cream);border:1px solid var(--edge);background:rgba(0,0,0,.25);border-radius:999px;padding:5px 12px 5px 10px;display:flex;align-items:center;gap:7px}
+.chips li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--cream))}
+.dl{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px}
+.btn{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:#1a1208;font:800 18px var(--body);
+  padding:16px 26px;border-radius:16px;background:linear-gradient(180deg,#ffc45c,var(--amber-deep));
+  box-shadow:0 0 0 1px rgba(255,255,255,.25) inset,0 14px 40px rgba(245,176,60,.32);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(255,255,255,.3) inset,0 18px 50px rgba(245,176,60,.48)}
+.btn svg{width:22px;height:22px;flex:none}
+.btn small{display:block;font:600 12px var(--body);opacity:.8;margin-top:1px}
+.alt{font-size:14px;color:var(--muted);font-weight:600}
+.alt a{color:var(--cream);font-weight:700;text-decoration:none;border-bottom:1px solid var(--edge)}
+.alt a:hover{border-color:var(--amber)}
+.ver{font-size:13px;color:var(--muted);font-weight:600;margin-top:14px}
+.ver b{color:var(--cream)}
+.note{display:none;margin-top:14px;font-size:14px;font-weight:600;background:var(--panel);border:1px solid var(--edge);border-radius:12px;padding:10px 14px;max-width:48ch}
+
+/* demo: Plexamp's folder → your folder */
+.demo{border-radius:22px;padding:1.5px;background:linear-gradient(95deg,rgba(245,176,60,.7),rgba(179,168,150,.3),rgba(126,214,184,.6))}
+.demo-in{border-radius:20px;background:rgba(16,12,9,.94);padding:20px}
+.demo-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.demo-head .lbl{font:700 11px var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.demo-btn{font:800 15px var(--body);color:#1a1208;background:var(--amber);border:0;border-radius:12px;padding:9px 18px;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.demo-btn:disabled{opacity:.55;cursor:default}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col{background:rgba(255,240,220,.03);border:1px solid var(--edge);border-radius:14px;padding:12px 14px;min-width:0}
+.col h3{font:700 13px var(--body);margin:0 0 8px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.col h3 .dot{width:8px;height:8px;border-radius:50%}
+.rows{list-style:none;margin:0;padding:0;font:500 13px/1.5 var(--mono)}
+.rows li{padding:6px 10px;border-radius:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .35s,color .35s,opacity .35s}
+.rows.src li{color:var(--dim)}
+.rows.src li.on{background:rgba(245,176,60,.16);color:var(--cream)}
+.rows.src li.done{opacity:.55}
+.rows.dst li{color:var(--cream);opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+.rows.dst li.in{opacity:1;transform:none}
+.rows.dst li .a{color:var(--amber)}.rows.dst li .b{color:var(--muted)}.rows.dst li .s{color:var(--dim)}
+.rows.dst li.skip{color:var(--muted)}
+.rows.dst li.skip::after{content:"  already there, skipped";color:var(--mint);font-family:var(--body);font-size:12px;font-weight:600}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--mint));transition:width .3s}
+.status{font-size:13px;color:var(--muted);font-weight:600;margin-top:8px;min-height:1.6em}
+.demo-note{font-size:14px;color:var(--muted);margin:10px 4px 70px}
+
+section{padding-block:10px 70px}
+h2{font:800 clamp(26px,3.6vw,38px)/1.1 var(--body);margin:0 0 10px;letter-spacing:-.025em;text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 28px;max-width:62ch;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--edge);border-radius:20px;padding:22px 22px 20px;min-width:0}
+.card h3{font:700 17px/1.3 var(--body);margin:0 0 8px;display:flex;align-items:center;gap:10px}
+.card h3 .bar2{width:4px;height:18px;border-radius:2px;flex:none;background:linear-gradient(180deg,var(--amber),var(--mint))}
+.card p{margin:0;color:var(--muted);font-size:15px}
+code.i{font:500 13px var(--mono);color:#efe6d6;background:rgba(255,240,220,.08);border-radius:6px;padding:1px 6px}
+
+.steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.step{background:var(--panel);border:1px solid var(--edge);border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.step h3{font:800 20px var(--body);margin:0;letter-spacing:-.01em}
+.step ol{margin:0;padding-left:20px;color:var(--muted);font-size:15px}
+.step ol li{margin:5px 0}
+.step ol b{color:var(--cream)}
+.step .get{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;color:var(--cream);font-weight:700;
+  border:1px solid var(--edge);border-radius:12px;padding:11px 14px;background:rgba(255,240,220,.03)}
+.step .get:hover{border-color:var(--amber);background:rgba(245,176,60,.1)}
+.step .get span{font-weight:600;font-size:13px;color:var(--muted)}
+pre.term{margin:0;font:500 13px/1.7 var(--mono);color:#efe6d6;background:rgba(0,0,0,.35);border:1px solid var(--edge);border-radius:12px;padding:12px 14px;overflow-x:auto}
+pre.term .c{color:var(--dim)}
+
+.notes{background:var(--panel);border:1px solid var(--edge);border-radius:20px;padding:24px 26px}
+.notes h3{font:800 20px var(--body);margin:0 0 6px}
+.notes .when{color:var(--muted);font-size:14px;margin:0 0 14px}
+.notes .body h4{font:700 16px var(--body);margin:18px 0 6px}
+.notes .body ul{margin:0;padding-left:20px;color:var(--muted)}
+.notes .body li{margin:5px 0}
+.notes .body strong{color:var(--cream)}
+.notes .body code{font:500 13px var(--mono);color:#efe6d6;background:rgba(255,240,220,.08);border-radius:6px;padding:1px 6px}
+.notes .more{display:inline-block;margin-top:16px;font-weight:700;text-decoration:none}
+
+footer{position:relative;z-index:1;border-top:1px solid var(--edge);color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;padding-block:24px max(28px,env(safe-area-inset-bottom,0px))}
+footer a{color:var(--cream);text-decoration:none;font-weight:700}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;justify-items:start;gap:26px;padding-block:44px 30px}
+  .hero .icon{width:150px;height:150px;border-radius:34px}
+  .grid,.steps,.cols{grid-template-columns:1fr}
+  .top nav{display:none}
+}
+@media (prefers-reduced-motion:reduce){.hero .icon{animation:none}.btn{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="mini" href="#"><img src="icon.webp" alt="">plickass</a>
+    <nav aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#download">Download</a>
+      <a href="#new">What's new</a>
+      <a href="https://github.com/dustalexw/plickass">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <img class="icon" src="icon.webp" alt="The plickass app icon: a record sliding into an amber folder with a download arrow">
+      <div>
+        <p class="eyebrow">Plexamp downloads, untangled · a dustalexw app</p>
+        <h1>plick<span class="ass">ass</span></h1>
+        <p class="tag">Your offline music, with real names.</p>
+        <p class="sub">Plexamp saves downloads under random IDs. plickass copies them out as <code class="i">Artist / Album / 01 - Track</code>, anywhere you like.</p>
+        <ul class="chips" aria-label="Highlights">
+          <li style="--c:var(--amber)">Finds Plexamp automatically</li><li>Never overwrites</li><li style="--c:var(--mint)">Live progress</li><li>Only on macOS</li>
+        </ul>
+        <div class="dl">
+          <a class="btn" id="mainBtn" href="https://github.com/dustalexw/plickass/releases/latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6 10 6 6 6-6"/><path d="M4 20h16"/></svg>
+            <span><span id="mainLabel">Download for Mac</span><small id="mainSub">Free · macOS 11 or later</small></span>
+          </a>
+          <p class="alt">Apple silicon and Intel · <a href="#download">install notes</a></p>
+        </div>
+        <p class="ver" id="ver">Version <b>1.3.0</b></p>
+        <p class="note" id="phoneNote">plickass is a Mac app. Open this page on your Mac to download it.</p>
+      </div>
+    </div>
+
+    <div class="demo" role="group" aria-label="Demo of plickass renaming Plexamp downloads">
+      <div class="demo-in">
+        <div class="demo-head">
+          <span class="lbl">Try it</span>
+          <button class="demo-btn" id="go" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
+            <span id="goLabel">Copy</span>
+          </button>
+        </div>
+        <div class="cols">
+          <div class="col"><h3><span class="dot" style="background:var(--dim)"></span>Plexamp's downloads</h3><ul class="rows src" id="src"></ul></div>
+          <div class="col"><h3><span class="dot" style="background:var(--amber)"></span>~/Music/From Plexamp</h3><ul class="rows dst" id="dst" aria-live="polite"></ul></div>
+        </div>
+        <div class="bar"><i id="prog"></i></div>
+        <div class="status" id="status">6 tracks, 3 albums, 2 artists ready to copy.</div>
+      </div>
+    </div>
+    <p class="demo-note">Each Plexamp download folder keeps an <code class="i">index.json</code> describing its tracks. plickass matches every random file name to its track and copies it with a real name. The demo uses made-up music.</p>
+
+    <section id="features">
+      <h2>Your downloads, back in your hands</h2>
+      <p class="lead">Plexamp's offline files are perfectly good music, just with names like <code class="i">c3f9e1c0-77b2</code> and no extension. plickass fixes that in a couple of clicks.</p>
+      <div class="grid">
+        <article class="card"><h3><span class="bar2"></span>Finds Plexamp on its own</h3><p>It locates your Plexamp downloads folder and shows how many tracks, albums and artists are ready. Somewhere unusual? Click <b>Browse…</b>.</p></article>
+        <article class="card"><h3><span class="bar2"></span>Real names, real folders</h3><p>Copies go into <code class="i">Artist / Album / 01 - Track</code> with the right file extension, ready for any player or library.</p></article>
+        <article class="card"><h3><span class="bar2"></span>Never overwrites</h3><p>Files already in the destination are skipped, so you can run it again after every new batch of downloads.</p></article>
+        <article class="card"><h3><span class="bar2"></span>Read-only on Plexamp's side</h3><p>Your downloads are copied, never moved or changed, so Plexamp keeps working offline exactly as before.</p></article>
+        <article class="card"><h3><span class="bar2"></span>Live progress</h3><p>Every copied track is listed as it happens, then <b>Show in Finder</b> takes you straight to the results.</p></article>
+        <article class="card"><h3><span class="bar2"></span>Small and native</h3><p>A real macOS window with no extra frameworks. The copying is done by Python 3, which most Macs already have.</p></article>
+      </div>
+    </section>
+
+    <section id="download">
+      <h2>Download</h2>
+      <p class="lead">One zip, one app. It runs on macOS 11 or later, on Apple silicon and Intel Macs.</p>
+      <div class="steps">
+        <article class="step">
+          <h3>Install plickass</h3>
+          <ol>
+            <li>Download the zip, unzip it and move <b>plickass.app</b> to Applications.</li>
+            <li>First launch: the app isn't notarized by Apple, so open <b>System Settings → Privacy &amp; Security</b> and click <b>Open Anyway</b> (or right-click the app and choose <b>Open</b>).</li>
+            <li>After that it opens normally.</li>
+          </ol>
+          <a class="get" id="appGet" href="https://github.com/dustalexw/plickass/releases/latest">Download plickass <span id="appGetSub">.zip</span></a>
+        </article>
+        <article class="step">
+          <h3>If it asks for Python</h3>
+          <ol>
+            <li>plickass uses <b>Python 3</b> to do the copying. Most Macs have it through Apple's Command Line Tools.</li>
+            <li>If plickass says it can't find Python, run this in Terminal, or install Python from <b>python.org</b>:</li>
+          </ol>
+<pre class="term">xcode-select --install</pre>
+          <a class="get" href="https://www.python.org/downloads/macos/">Python for macOS <span>python.org</span></a>
+        </article>
+        <article class="step" style="grid-column:1/-1">
+          <h3>Or build it yourself</h3>
+          <p style="margin:0;color:var(--muted);font-size:15px">The app is a small JavaScript-for-Automation window around Python scripts, so building takes seconds. There's also a cross-platform command-line script for Windows and Linux.</p>
+<pre class="term">git clone https://github.com/dustalexw/plickass
+cd plickass
+./build.command                      <span class="c"># builds and opens plickass.app</span>
+python3 plexampDownloadCopier.py -d ~/Music/From\ Plexamp   <span class="c"># or just the script</span></pre>
+        </article>
+      </div>
+    </section>
+
+    <section id="new">
+      <h2>What's new</h2>
+      <div class="notes">
+        <h3 id="relName">plickass 1.3.0</h3>
+        <p class="when" id="relWhen">macOS</p>
+        <div class="body" id="relBody">
+          <ul>
+            <li><strong>Finds your Plexamp downloads automatically</strong> and shows how many tracks, albums and artists are ready to copy.</li>
+            <li><strong>Never overwrites.</strong> Files already in the destination are skipped.</li>
+            <li><strong>Read-only on the Plexamp side.</strong> Your downloads are never moved or changed.</li>
+            <li><strong>Live progress</strong> with every copied track listed as it happens, then Show in Finder.</li>
+          </ul>
+        </div>
+        <a class="more" id="relLink" href="https://github.com/dustalexw/plickass">plickass on GitHub →</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Based on <a href="https://github.com/danrahn/Plexamp-Download-Copier" style="font-weight:600">Plexamp Download Copier</a> by Daniel Rahn. plickass is not affiliated with Plex.</span>
+    <a href="https://github.com/dustalexw/plickass">Source on GitHub</a>
+  </div>
+</footer>
+
+<script>
+// ---- demo: random IDs become real names ----
+(()=>{const T=[
+  ['c3f9e1c0-77b2','Lumen Harbor','Night Signals','01 - Venus','m4a'],
+  ['8a41d2e5-0c9f','Lumen Harbor','Night Signals','02 - Low Tide','m4a'],
+  ['b502c8aa-19fe','Lumen Harbor','Night Signals','03 - Glass Hours','m4a'],
+  ['5e7701bd-a3c4','The Paper Moths','Run','01 - Run','flac'],
+  ['f19c06e2-4d8a','The Paper Moths','Run','02 - Static Bloom','flac'],
+  ['e0b4f37c-c6d1','The Paper Moths','Porchlight (Live)','04 - Porchlight','mp3']];
+  const src=document.getElementById('src'),dst=document.getElementById('dst'),go=document.getElementById('go'),
+        lbl=document.getElementById('goLabel'),prog=document.getElementById('prog'),st=document.getElementById('status');
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;let runs=0;
+  function reset(){src.innerHTML=T.map(t=>`<li>${t[0]}</li>`).join('');
+    dst.innerHTML=T.map(t=>`<li><span class="a">${t[1]}</span><span class="s"> / </span><span class="b">${t[2]}</span><span class="s"> / </span>${t[3]}.${t[4]}</li>`).join('');}
+  reset();
+  go.addEventListener('click',()=>{const again=runs>0;runs++;go.disabled=true;
+    const s=[...src.children],d=[...dst.children];if(!again){d.forEach(li=>li.classList.remove('in','skip'));}
+    s.forEach(li=>li.classList.remove('on','done'));prog.style.width='0';let i=0,copied=0;
+    const step=()=>{if(i>0){s[i-1].classList.remove('on');s[i-1].classList.add('done');}
+      if(i===T.length){go.disabled=false;lbl.textContent='Copy again';
+        st.textContent=again?`Done: 0 copied, ${T.length} already there and skipped. Nothing was overwritten.`:`Done: ${copied} tracks copied. Show in Finder →`;return;}
+      s[i].classList.add('on');
+      if(again)d[i].classList.add('skip');else{d[i].classList.add('in');copied++;}
+      st.textContent=(again?'Checking ':'Copying ')+T[i][3].replace(/^\d+ - /,'')+'…';
+      prog.style.width=((i+1)/T.length*100)+'%';i++;setTimeout(step,still?60:520);};
+    step();});})();
+
+// ---- phones and tablets: plickass is a Mac app ----
+const ua=navigator.userAgent,plat=(navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||'';
+const phone=/iPhone|iPad|iPod|Android/i.test(ua)||(/Mac/.test(plat)&&navigator.maxTouchPoints>1);
+if(phone)document.getElementById('phoneNote').style.display='block';
+
+// ---- download links and release notes from the latest GitHub release ----
+const btn=document.getElementById('mainBtn'),get=document.getElementById('appGet');
+function md(src){const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const inl=s=>esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2">$1</a>');
+  let out='',inList=false;
+  for(const raw of src.replace(/\r/g,'').split('\n')){const l=raw.trim();
+    if(/^#{1,6}\s/.test(l)){if(inList){out+='</ul>';inList=false;}const t=l.replace(/^#{1,6}\s+/,'');if(/^(downloads?|install)/i.test(t))break;out+='<h4>'+inl(t)+'</h4>';}
+    else if(/^\d+\.\s+|^[-*]\s+/.test(l)){if(!inList){out+='<ul>';inList=true;}out+='<li>'+inl(l.replace(/^(\d+\.|[-*])\s+/,''))+'</li>';}
+    else if(l){if(inList){out+='</ul>';inList=false;}out+='<p style="color:var(--muted);margin:6px 0">'+inl(l)+'</p>';}}
+  if(inList)out+='</ul>';return out;}
+fetch('https://api.github.com/repos/dustalexw/plickass/releases/latest',{headers:{Accept:'application/vnd.github+json'}})
+  .then(r=>r.ok?r.json():Promise.reject(r.status)).then(rel=>{
+    const a=(rel.assets||[]).find(a=>/macOS.*\.zip$/i.test(a.name));if(!a)return;
+    const v=(rel.tag_name||'').replace(/^v/,'')||'1.3.0';
+    btn.href=a.browser_download_url;get.href=a.browser_download_url;
+    document.getElementById('mainSub').textContent='Free · version '+v;
+    document.getElementById('ver').innerHTML='Latest release: <b>plickass '+v+'</b>';
+    document.getElementById('relName').textContent=rel.name||('plickass '+v);
+    if(rel.published_at)document.getElementById('relWhen').textContent='Released '+new Date(rel.published_at).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})+' · macOS';
+    if(rel.body){const h=md(rel.body);if(h.trim())document.getElementById('relBody').innerHTML=h;}
+    if(rel.html_url)document.getElementById('relLink').href=rel.html_url;
+  }).catch(()=>{});
+</script>
+</body>
+</html>
