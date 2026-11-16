@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 LOG="$PWD/iOS/build-ios.log"
 exec > >(tee "$LOG") 2>&1
 echo "== started $(date)"
-xcodebuild -version | head -1
+xcodebuild -version 2>/dev/null | head -1 || true
 # Signing team: PLICKASS_APPLE_TEAM, else the one in the project, else the first in Xcode.
 if [ -z "${PLICKASS_APPLE_TEAM:-}" ]; then
   PLICKASS_APPLE_TEAM=$(grep -o 'DEVELOPMENT_TEAM = "[A-Z0-9]\{10\}"' iOS/plickass.xcodeproj/project.pbxproj 2>/dev/null | head -1 | grep -o '[A-Z0-9]\{10\}' || true)
