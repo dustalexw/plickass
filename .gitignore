@@ -13,3 +13,4 @@ iOS/build-ios.log
 iOS/.build/
 Payload/
 *.ipa
+iOS/export-adhoc.log
