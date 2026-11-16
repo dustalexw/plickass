@@ -21,8 +21,8 @@ python3 scripts/make_ios_project.py
 WANT="${1:-}"
 DEVICES=$(xcrun devicectl list devices 2>/dev/null | grep -E 'available|connected' | grep -v simulated || true)
 echo "$DEVICES"
-if [ -n "$WANT" ]; then LINE=$(echo "$DEVICES" | grep -i -- "$WANT" | head -1); else LINE=$(echo "$DEVICES" | grep -iE 'iPhone|iPad' | head -1); fi
-UDID=$(echo "$LINE" | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}|[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}' | head -1)
+if [ -n "$WANT" ]; then LINE=$(echo "$DEVICES" | grep -i -- "$WANT" | head -1 || true); else LINE=$(echo "$DEVICES" | grep -iE 'iPhone|iPad' | head -1 || true); fi
+UDID=$(echo "$LINE" | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}|[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}' | head -1 || true)
 [ -n "$UDID" ] || { echo "No iPhone or iPad found. Connect and unlock it, then try again."; exit 1; }
 echo "device=$UDID"
 xcodebuild -project iOS/plickass.xcodeproj -scheme plickass -configuration Release \
