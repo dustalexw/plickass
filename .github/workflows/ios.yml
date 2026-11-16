@@ -1,0 +1,49 @@
+name: iOS
+
+on:
+  push:
+    branches: [main]
+    paths: ['iOS/**', 'scripts/make_ios_project.py', 'VERSION', '.github/workflows/ios.yml']
+  pull_request:
+    paths: ['iOS/**', 'scripts/make_ios_project.py', 'VERSION', '.github/workflows/ios.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Choose Xcode
+        run: |
+          xcode=$(ls -d /Applications/Xcode_16*.app | sort -V | tail -1)
+          echo "DEVELOPER_DIR=$xcode/Contents/Developer" >> "$GITHUB_ENV"
+      - name: Plex and naming tests
+        run: swift test --package-path iOS
+      - name: Generate the project
+        run: |
+          python3 -m pip install --quiet --break-system-packages pillow || python3 -m pip install --quiet pillow
+          python3 scripts/make_ios_project.py
+          git diff --stat -- iOS
+      - name: Build for iPhone and iPad (unsigned)
+        run: |
+          xcodebuild -project iOS/plickass.xcodeproj -scheme plickass -configuration Release \
+            -destination 'generic/platform=iOS' -derivedDataPath build/device \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO DEVELOPMENT_TEAM= build | tail -25
+      - name: Build for the Simulator
+        run: |
+          xcodebuild -project iOS/plickass.xcodeproj -scheme plickass -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/sim \
+            CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM= build | tail -25
+      - name: Package the unsigned app
+        run: |
+          mkdir -p Payload && cp -R build/device/Build/Products/Release-iphoneos/plickass.app Payload/
+          zip -qry plickass-ios-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plickass-ios-unsigned
+          path: plickass-ios-unsigned.ipa

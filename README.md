@@ -35,6 +35,32 @@ to Applications. It runs on macOS 11 or later, on Apple silicon and Intel.
   Privacy & Security**, scroll down and click **Open Anyway** next to plickass (or right-click the app and
   choose **Open**). After that it opens normally.
 
+## plickass for iPhone and iPad
+
+iOS keeps Plexamp's downloads inside Plexamp's own private storage, where no other app can read
+them. So on iPhone and iPad, plickass goes to the source: it signs in to Plex and downloads the
+albums, artists and playlists you pick straight from your Plex Media Server, saved to the Files app
+with the same layout as the Mac app.
+
+```
+Sign in with Plex → Pick albums, artists or playlists → Files › On My iPhone › plickass › Artist › Album › 01 - Track
+```
+
+* **Browse like Plexamp:** albums, artists and playlists from your music library, with search and artwork.
+  Tap ↓ beside anything to download it.
+* **Saves to Files:** On My iPhone › plickass by default, or any folder you choose in Settings
+  (iCloud Drive, a USB drive, another app's folder).
+* **Original files:** the files exactly as stored on your server; FLAC stays FLAC. Albums with
+  several discs are numbered `1-01`, `2-01`…, and a `cover.jpg` goes in each album folder (optional).
+* **Never overwrites.** Tracks already in the folder are skipped and marked ✓, so you can download
+  an album again to fill in what's missing.
+* Works with owned and shared servers, on your home network or away (local, direct or Plex relay).
+
+**Build it:** on a Mac with Xcode 16 or later, connect your iPhone or iPad and double-click
+`iOS/build-ios.command`. It generates `iOS/plickass.xcodeproj` (`scripts/make_ios_project.py`),
+signs with your Apple Development team and installs the app. The Plex and naming code is tested with
+`swift test --package-path iOS`.
+
 ## The script
 
 plickass is built on [Plexamp Download Copier](https://github.com/danrahn/Plexamp-Download-Copier) by Daniel Rahn, whose command-line script does the copying. The script copies downloaded music from Plexamp to a location of your choice.

@@ -6,3 +6,10 @@ launch-debug.log
 # local music output, not part of the project
 hue/
 *.zip
+
+# iOS build output
+build/
+iOS/build-ios.log
+iOS/.build/
+Payload/
+*.ipa
