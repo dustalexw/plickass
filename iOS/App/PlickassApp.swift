@@ -104,6 +104,10 @@ struct SignInView: View {
         .buttonStyle(.borderedProminent).foregroundStyle(.black)
         .disabled(account.signingIn)
         .padding(.horizontal, 28)
+        if account.signingIn {
+          Text("Sign in to Plex on the page that opened. It closes by itself once plickass is allowed, and your library opens.")
+            .font(.callout).foregroundStyle(Brand.amber).multilineTextAlignment(.center).padding(.horizontal, 28)
+        }
         Text("plickass reads your library and downloads the files you choose. It never changes anything on your server. Not affiliated with Plex.")
           .font(.footnote).foregroundStyle(Brand.cream.opacity(0.55)).multilineTextAlignment(.center)
           .padding(.horizontal, 32).padding(.bottom, 24)

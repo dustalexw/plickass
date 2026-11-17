@@ -66,6 +66,11 @@ enum TokenStore {
   }
 }
 
+/// Whether the sign-in page is still showing.
+@MainActor private final class PageState {
+  var open = true
+}
+
 /// What plickass last connected to, so the library opens at once on the next launch
 /// while the connection is checked in the background.
 private struct SavedConnection: Codable {
@@ -118,9 +123,9 @@ private struct SavedSection: Codable {
 
   // MARK: Signing in
 
-  /// Opens Plex's sign-in page and waits for the approval. Plex hands back to plickass
-  /// when you approve; the PIN is also checked meanwhile, so approving in Safari or
-  /// on another device works too.
+  /// Opens Plex's sign-in page and watches for the approval. Plex doesn't send apps
+  /// with their own link scheme back by itself, so plickass checks the sign-in every
+  /// second and closes the page as soon as you've signed in and allowed it.
   func signIn(using session: WebAuthenticationSession) async {
     guard !signingIn else { return }
     signingIn = true
@@ -128,11 +133,16 @@ private struct SavedSection: Codable {
     defer { signingIn = false }
     do {
       let pin = try await client.createPin()
-      let url = client.authURL(for: pin, forward: "plickass://signed-in")
-      _ = try? await session.authenticate(using: url, callbackURLScheme: "plickass")
-      // The page has closed: give Plex a moment to record the approval.
+      let url = client.authURL(for: pin)
+      let pageOpen = PageState()
+      let page = Task { @MainActor in
+        _ = try? await session.authenticate(using: url, callbackURLScheme: "plickass")
+        pageOpen.open = false
+      }
       var approved: String?
-      for attempt in 0..<20 {
+      // Up to 15 minutes while the page is open, then 10 seconds after it closes.
+      var closedAt: Date?
+      for attempt in 0..<900 {
         do {
           if let found = try await client.checkPin(pin).authToken {
             approved = found
@@ -141,11 +151,14 @@ private struct SavedSection: Codable {
         } catch {
           PlickassLog.write("PIN check \(attempt): \(error)")
         }
-        try? await Task.sleep(nanoseconds: 500_000_000)
+        if closedAt == nil, !pageOpen.open { closedAt = Date() }
+        if let closedAt, Date().timeIntervalSince(closedAt) > 10 { break }
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
       }
+      page.cancel()
       guard let approved else {
         PlickassLog.write("sign-in closed without approval")
-        error = "Sign-in wasn’t finished. Tap Sign In with Plex and approve plickass."
+        error = "plickass wasn’t allowed yet. Tap Sign In with Plex, sign in, and leave the page open until it closes by itself."
         return
       }
       PlickassLog.write("signed in")
