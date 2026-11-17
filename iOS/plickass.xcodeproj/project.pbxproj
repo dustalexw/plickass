@@ -1,0 +1,35 @@
+// !$*UTF8*$!
+{archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+DC54F053F6DE92D871EB4C7F = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/AccountStore.swift"; sourceTree = SOURCE_ROOT;};
+6F64C544EC062CD495D201B9 = {isa = PBXBuildFile; fileRef = DC54F053F6DE92D871EB4C7F;};
+CA1798B56FE0D793D6117068 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/DownloadManager.swift"; sourceTree = SOURCE_ROOT;};
+400413E0C7748792E2D3A7CA = {isa = PBXBuildFile; fileRef = CA1798B56FE0D793D6117068;};
+1779983895EB8B86FC6301A7 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/DownloadsView.swift"; sourceTree = SOURCE_ROOT;};
+19F0FB1A4346B2EC68E0D4F0 = {isa = PBXBuildFile; fileRef = 1779983895EB8B86FC6301A7;};
+1238188354BD19180AF05EE7 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/LibraryView.swift"; sourceTree = SOURCE_ROOT;};
+E82967650E1C993CC0CA32FF = {isa = PBXBuildFile; fileRef = 1238188354BD19180AF05EE7;};
+D8D419C063F3AAA6D0B32794 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/PlickassApp.swift"; sourceTree = SOURCE_ROOT;};
+5C184991E8A19E74274D5168 = {isa = PBXBuildFile; fileRef = D8D419C063F3AAA6D0B32794;};
+C2B4B6513C579673EDFCDBF1 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/PlexClient.swift"; sourceTree = SOURCE_ROOT;};
+AC7E742B28D05B670DB351FF = {isa = PBXBuildFile; fileRef = C2B4B6513C579673EDFCDBF1;};
+395F739D48BED6834CDBDA97 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/PlexModels.swift"; sourceTree = SOURCE_ROOT;};
+9608A61EFA50343B7F893E46 = {isa = PBXBuildFile; fileRef = 395F739D48BED6834CDBDA97;};
+A436D0B463B33C6DF2F2B330 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Core/PlickassNaming.swift"; sourceTree = SOURCE_ROOT;};
+73565313C6BFD25960C135FD = {isa = PBXBuildFile; fileRef = A436D0B463B33C6DF2F2B330;};
+7A5CCB0147A1F44705D7DBD4 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "App/Assets.xcassets"; sourceTree = SOURCE_ROOT;};
+B70D2F1FAED795B3B7353E70 = {isa = PBXBuildFile; fileRef = 7A5CCB0147A1F44705D7DBD4;};
+38A007151ABE87CC01A5B6E9 = {isa = PBXFileReference; explicitFileType = wrapper.application; path = plickass.app; sourceTree = BUILT_PRODUCTS_DIR;};
+FBDC4F23F93125BBEEAE800C = {isa = PBXGroup; children = (38A007151ABE87CC01A5B6E9); name = Products; sourceTree = "<group>";};
+B28B7AF69320201D1CF206EB = {isa = PBXGroup; children = (DC54F053F6DE92D871EB4C7F,CA1798B56FE0D793D6117068,1779983895EB8B86FC6301A7,1238188354BD19180AF05EE7,D8D419C063F3AAA6D0B32794,C2B4B6513C579673EDFCDBF1,395F739D48BED6834CDBDA97,A436D0B463B33C6DF2F2B330,7A5CCB0147A1F44705D7DBD4,FBDC4F23F93125BBEEAE800C); sourceTree = "<group>";};
+BCE16DD0260827ECF338C787 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (6F64C544EC062CD495D201B9,400413E0C7748792E2D3A7CA,19F0FB1A4346B2EC68E0D4F0,E82967650E1C993CC0CA32FF,5C184991E8A19E74274D5168,AC7E742B28D05B670DB351FF,9608A61EFA50343B7F893E46,73565313C6BFD25960C135FD); runOnlyForDeploymentPostprocessing = 0;};
+7561BFB015D8F536760CB671 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0;};
+0189424A5A60FED329FA868E = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B70D2F1FAED795B3B7353E70); runOnlyForDeploymentPostprocessing = 0;};
+89E1FD6268CC0F221A2BE178 = {isa = XCBuildConfiguration; name = Debug; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = "17.0";SDKROOT = "iphoneos";SWIFT_VERSION = "5.0";CLANG_ENABLE_MODULES = "YES";ENABLE_USER_SCRIPT_SANDBOXING = "YES";SWIFT_OPTIMIZATION_LEVEL = "-Onone";DEBUG_INFORMATION_FORMAT = "dwarf";SWIFT_COMPILATION_MODE = "singlefile";SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG";};};
+7082CC0B6FC1282FCEABD07A = {isa = XCBuildConfiguration; name = Debug; buildSettings = {PRODUCT_BUNDLE_IDENTIFIER = "com.dustalexw.plickass.ios";PRODUCT_NAME = "plickass";INFOPLIST_FILE = "Info.plist";CODE_SIGN_STYLE = "Automatic";DEVELOPMENT_TEAM = "F84H6JS7V3";TARGETED_DEVICE_FAMILY = "1,2";SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";SUPPORTS_MACCATALYST = "NO";ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "AccentColor";LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";ENABLE_TESTABILITY = "YES";};};
+E6DE6C99132752C914FEF632 = {isa = XCBuildConfiguration; name = Release; buildSettings = {IPHONEOS_DEPLOYMENT_TARGET = "17.0";SDKROOT = "iphoneos";SWIFT_VERSION = "5.0";CLANG_ENABLE_MODULES = "YES";ENABLE_USER_SCRIPT_SANDBOXING = "YES";SWIFT_OPTIMIZATION_LEVEL = "-O";DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";SWIFT_COMPILATION_MODE = "wholemodule";SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";};};
+639A7CA24D39909E713B47F7 = {isa = XCBuildConfiguration; name = Release; buildSettings = {PRODUCT_BUNDLE_IDENTIFIER = "com.dustalexw.plickass.ios";PRODUCT_NAME = "plickass";INFOPLIST_FILE = "Info.plist";CODE_SIGN_STYLE = "Automatic";DEVELOPMENT_TEAM = "F84H6JS7V3";TARGETED_DEVICE_FAMILY = "1,2";SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";SUPPORTS_MACCATALYST = "NO";ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "AccentColor";LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";ENABLE_TESTABILITY = "NO";};};
+F8C70E4123C9AE82C42562CC = {isa = XCConfigurationList; buildConfigurations = (89E1FD6268CC0F221A2BE178,E6DE6C99132752C914FEF632); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;};
+651ECA092BE81738918D8CDB = {isa = XCConfigurationList; buildConfigurations = (7082CC0B6FC1282FCEABD07A,639A7CA24D39909E713B47F7); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release;};
+7D1043473D55BFA90E8530D3 = {isa = PBXNativeTarget; buildConfigurationList = 651ECA092BE81738918D8CDB; buildPhases = (BCE16DD0260827ECF338C787,7561BFB015D8F536760CB671,0189424A5A60FED329FA868E); buildRules = (); dependencies = (); name = plickass; productName = plickass; productReference = 38A007151ABE87CC01A5B6E9; productType = "com.apple.product-type.application";};
+98F54143AB4E86B28C3AFEE0 = {isa = PBXProject; attributes = {LastUpgradeCheck = 1600; TargetAttributes = {7D1043473D55BFA90E8530D3 = {CreatedOnToolsVersion = 16.0; ProvisioningStyle = Automatic; };};}; buildConfigurationList = F8C70E4123C9AE82C42562CC; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en,Base); mainGroup = B28B7AF69320201D1CF206EB; productRefGroup = FBDC4F23F93125BBEEAE800C; projectDirPath = ""; projectRoot = ""; targets = (7D1043473D55BFA90E8530D3);};
+};rootObject = 98F54143AB4E86B28C3AFEE0;}
