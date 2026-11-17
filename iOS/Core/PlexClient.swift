@@ -107,15 +107,33 @@ struct PlexClient: Sendable {
   /// The first address of the server that answers.
   func reachableURL(for resource: PlexResource) async throws -> URL {
     let token = resource.accessToken
-    for connection in Self.orderedConnections(resource) {
-      guard let base = URL(string: connection.uri) else { continue }
-      var probe = request(base.appendingPathComponent("identity"), token: token, timeout: connection.relay ? 12 : 5)
-      probe.cachePolicy = .reloadIgnoringLocalCacheData
-      if let (_, response) = try? await session.data(for: probe), (response as? HTTPURLResponse)?.statusCode == 200 {
-        return base
+    let connections = Self.orderedConnections(resource)
+    // Every address is tried at once; the best-ranked one that answers wins, so an
+    // unreachable home address doesn't hold up the remote ones.
+    let answered = await withTaskGroup(of: (Int, Bool).self) { group -> Int? in
+      for (rank, connection) in connections.enumerated() {
+        guard let base = URL(string: connection.uri) else { continue }
+        var probe = request(base.appendingPathComponent("identity"), token: token, timeout: connection.relay ? 15 : 8)
+        probe.cachePolicy = .reloadIgnoringLocalCacheData
+        group.addTask {
+          let response = try? await session.data(for: probe).1
+          return (rank, (response as? HTTPURLResponse)?.statusCode == 200)
+        }
       }
+      var finished = Set<Int>(), ok = Set<Int>()
+      for await (rank, success) in group {
+        finished.insert(rank)
+        if success { ok.insert(rank) }
+        // Done once an address answered and every better one has finished.
+        if let best = ok.min(), (0..<best).allSatisfy(finished.contains) {
+          group.cancelAll()
+          return Optional(best)
+        }
+      }
+      return ok.min()
     }
-    throw PlexError.noServer
+    guard let best = answered, let url = URL(string: connections[best].uri) else { throw PlexError.noServer }
+    return url
   }
 
   // MARK: A server

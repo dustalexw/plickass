@@ -25,12 +25,89 @@ struct Artwork: View {
   }
 }
 
-/// Browse the music library by album, artist or playlist, like Plexamp, and
-/// download any of them.
+enum LibraryMode: String, CaseIterable, Identifiable {
+  case albums = "Albums", artists = "Artists", playlists = "Playlists"
+  var id: String { rawValue }
+  var icon: String {
+    switch self {
+    case .albums: return "square.stack"
+    case .artists: return "music.mic"
+    case .playlists: return "music.note.list"
+    }
+  }
+}
+
+/// The phone layout (iPhone Duo's outer display and other iPhones): Albums,
+/// Artists and Playlists in one stack, each opening on top.
 struct LibraryView: View {
   @EnvironmentObject private var account: AccountStore
+  @AppStorage("library.mode") private var mode = LibraryMode.albums
+
+  var body: some View {
+    NavigationStack {
+      LibraryBrowser(mode: mode)
+        .navigationTitle(account.section?.title ?? "Library")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+          ToolbarItem(placement: .principal) {
+            Picker("Show", selection: $mode) {
+              ForEach(LibraryMode.allCases) { Text($0.rawValue).tag($0) }
+            }.pickerStyle(.segmented).frame(width: 280)
+          }
+          ToolbarItem(placement: .topBarTrailing) { LibraryMenu() }
+        }
+        .navigationDestination(for: PlexItem.self) { ItemView(item: $0) }
+    }
+  }
+}
+
+/// Switches between music libraries (and servers) without going to Settings.
+struct LibraryMenu: View {
+  @EnvironmentObject private var account: AccountStore
+  var body: some View {
+    Menu {
+      if account.sections.count > 1 {
+        Section("Music Library") {
+          ForEach(account.sections) { section in
+            Button {
+              account.choose(section: section)
+            } label: {
+              if section.key == account.section?.key { Label(section.title, systemImage: "checkmark") } else { Text(section.title) }
+            }
+          }
+        }
+      }
+      if account.servers.count > 1 {
+        Section("Server") {
+          ForEach(account.servers) { server in
+            Button {
+              Task { await account.choose(server: server) }
+            } label: {
+              if server.clientIdentifier == account.server?.clientIdentifier {
+                Label(server.name, systemImage: "checkmark")
+              } else {
+                Text(server.name)
+              }
+            }
+          }
+        }
+      }
+      Button("Reconnect", systemImage: "arrow.clockwise") { Task { await account.connect() } }
+    } label: {
+      Label(account.serverName.isEmpty ? "Server" : account.serverName, systemImage: "server.rack")
+    }
+  }
+}
+
+/// Albums, artists or playlists from the music library, with search. On wide
+/// displays albums show as a grid of covers and `onSelect` opens them beside it.
+struct LibraryBrowser: View {
+  let mode: LibraryMode
+  var wide = false
+  var selected: PlexItem.ID? = nil
+  var onSelect: ((PlexItem) -> Void)? = nil
+  @EnvironmentObject private var account: AccountStore
   @EnvironmentObject private var downloads: DownloadManager
-  @AppStorage("library.mode") private var mode = Mode.albums
   @State private var items: [PlexItem] = []
   @State private var total = 0
   @State private var loading = false
@@ -39,44 +116,29 @@ struct LibraryView: View {
   @State private var results: [PlexItem] = []
   @State private var searching = false
 
-  enum Mode: String, CaseIterable, Identifiable {
-    case albums = "Albums", artists = "Artists", playlists = "Playlists"
-    var id: String { rawValue }
-  }
-
   private var loadKey: String { "\(account.serverURL?.absoluteString ?? "")|\(account.section?.key ?? "")|\(mode.rawValue)" }
 
   var body: some View {
-    NavigationStack {
-      Group {
-        if !account.ready {
-          connectingView
-        } else if !query.isEmpty {
-          searchList
-        } else {
-          libraryList
-        }
+    Group {
+      if !account.ready {
+        connectingView
+      } else if !query.isEmpty {
+        searchList
+      } else if wide && mode != .artists {
+        coverGrid
+      } else {
+        libraryList
       }
-      .navigationTitle(account.section?.title ?? "Library")
-      .toolbar {
-        ToolbarItem(placement: .principal) {
-          Picker("Show", selection: $mode) {
-            ForEach(Mode.allCases) { Text($0.rawValue).tag($0) }
-          }.pickerStyle(.segmented).frame(width: 280).disabled(!account.ready)
-        }
-      }
-      .navigationBarTitleDisplayMode(.inline)
-      .searchable(text: $query, prompt: "Artists, albums, tracks")
-      .task(id: loadKey) { await reload() }
-      .task(id: query) { await search() }
-      .refreshable { await reload() }
-      .navigationDestination(for: PlexItem.self) { ItemView(item: $0) }
     }
+    .searchable(text: $query, prompt: "Artists, albums, tracks")
+    .task(id: loadKey) { await reload() }
+    .task(id: query) { await search() }
+    .refreshable { await reload() }
   }
 
   @ViewBuilder private var connectingView: some View {
     if account.connecting {
-      ProgressView("Connecting to \(account.server?.name ?? "your server")…")
+      ProgressView("Connecting to \(account.serverName.isEmpty ? "your server" : account.serverName)…")
     } else {
       ContentUnavailableView {
         Label("Not connected", systemImage: "server.rack")
@@ -95,16 +157,66 @@ struct LibraryView: View {
       }
       ForEach(items) { item in
         row(item).onAppear { if item.id == items.last?.id { Task { await loadMore() } } }
+          .listRowBackground(item.id == selected ? Brand.amber.opacity(0.18) : nil)
       }
       if loading { HStack { Spacer(); ProgressView(); Spacer() } }
     }
     .listStyle(.plain)
-    .overlay {
-      if !loading && items.isEmpty && failure == nil {
-        ContentUnavailableView("Nothing here", systemImage: "music.note.list",
-                               description: Text(mode == .playlists ? "This server has no music playlists." : "This library is empty."))
+    .overlay { emptyOverlay }
+  }
+
+  /// Covers in as many columns as fit, for the inner display and iPad.
+  private var coverGrid: some View {
+    ScrollView {
+      if let failure {
+        Label(failure, systemImage: "exclamationmark.triangle").foregroundStyle(.orange).padding()
       }
+      LazyVGrid(columns: [GridItem(.adaptive(minimum: 150, maximum: 220), spacing: 18)], spacing: 22) {
+        ForEach(items) { item in
+          tile(item).onAppear { if item.id == items.last?.id { Task { await loadMore() } } }
+        }
+      }
+      .padding(18)
+      if loading { ProgressView().padding() }
     }
+    .overlay { emptyOverlay }
+  }
+
+  @ViewBuilder private var emptyOverlay: some View {
+    if !loading && items.isEmpty && failure == nil {
+      ContentUnavailableView("Nothing here", systemImage: "music.note.list",
+                             description: Text(mode == .playlists ? "This server has no music playlists." : "This library is empty."))
+    }
+  }
+
+  private func tile(_ item: PlexItem) -> some View {
+    VStack(alignment: .leading, spacing: 6) {
+      ZStack(alignment: .bottomTrailing) {
+        GeometryReader { geo in
+          Artwork(path: item.artwork, size: geo.size.width)
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .overlay {
+          if item.id == selected {
+            RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Brand.amber, lineWidth: 3)
+          }
+        }
+        Button {
+          Task { await download(item) }
+        } label: {
+          Image(systemName: "arrow.down.circle.fill").font(.title2).symbolRenderingMode(.palette)
+            .foregroundStyle(.black, Brand.amber)
+        }
+        .buttonStyle(.plain).padding(8)
+        .accessibilityLabel("Download \(item.title)")
+      }
+      Text(item.title).font(.subheadline.weight(.semibold)).lineLimit(1)
+      Text(subtitle(item)).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+    }
+    .contentShape(Rectangle())
+    .onTapGesture { onSelect?(item) }
+    .accessibilityElement(children: .combine)
+    .accessibilityAddTraits(.isButton)
   }
 
   private var searchList: some View {
@@ -135,6 +247,8 @@ struct LibraryView: View {
     }
     if item.type == "track" {
       content
+    } else if let onSelect {
+      Button { onSelect(item) } label: { content.contentShape(Rectangle()) }.buttonStyle(.plain)
     } else {
       NavigationLink(value: item) { content }
     }
@@ -190,7 +304,10 @@ struct LibraryView: View {
       }
     } catch is CancellationError {
     } catch {
-      if (error as? URLError)?.code != .cancelled { failure = error.localizedDescription }
+      if (error as? URLError)?.code != .cancelled {
+        failure = error.localizedDescription
+        PlickassLog.write("library load failed: \(error)")
+      }
     }
   }
 
